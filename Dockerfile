@@ -31,9 +31,6 @@ RUN wget https://github.com/samtools/bcftools/archive/refs/tags/$hver.tar.gz && 
   make install && \
   cd .. && rm -rf bcftools $hver.tar.gz
 
-# Set environment variables for plugins
-ENV BCFTOOLS_PLUGINS=/usr/local/libexec/bcftools/plugins
-
 # Clone and install the liftover plugin
 RUN git clone https://github.com/freeseek/score.git && \
   cd score && \
@@ -44,7 +41,6 @@ RUN git clone https://github.com/freeseek/score.git && \
 
 ENTRYPOINT ["bcftools"]
 
-RUN export BCFTOOLS_PLUGINS=/bcftools/plugins
-ENV PATH="/bcftools:/opt/conda/bin:${PATH}"
-# If a plugin still does not work, bcftools +name -vv explains why it would not load.
-# Note that plugins can be also run by giving the full path, for example bcftools +/path/to/plugin-name.so.
+# Set environment variables for plugins
+ENV BCFTOOLS_PLUGINS=/bcftools/plugins
+ENV PATH="/bcftools:${PATH}"
