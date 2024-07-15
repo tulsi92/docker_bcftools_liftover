@@ -31,13 +31,23 @@ RUN wget https://github.com/samtools/bcftools/archive/refs/tags/$hver.tar.gz && 
   make install && \
   cd .. && rm -rf bcftools $hver.tar.gz
 
-# Clone and install the liftover plugin
-RUN git clone https://github.com/freeseek/score.git && \
-  cd score && \
+# Compile bcftools plugins
+RUN apt-get install -y libcurl4 libopenblas0-openmp libcholmod4 libsuitesparse-dev
+if [ ! -f /usr/include/cholmod.h ]; then
+  sed 's/^#include "cholmod_/#include "suitesparse\/cholmod_/;s/^#include "SuiteSparse_/#include "suitesparse\/SuiteSparse_/' \
+    /usr/include/suitesparse/cholmod.h | sudo tee /usr/include/cholmod.h
+
+RUN wget -P plugins https://raw.githubusercontent.com/freeseek/score/master/{score.{c,h},{munge,liftover,metal,blup}.c,pgs.{c,mk}} && \
   make && \
-  cp *.so $BCFTOOLS_PLUGINS && \
-  cd .. && \
-  rm -rf score
+  /bin/cp bcftools plugins/{munge,liftover,score,metal,pgs,blup}.so $HOME/bin/
+
+# Clone and install the liftover plugin
+# RUN git clone https://github.com/freeseek/score.git && \
+#   cd score && \
+#   make && \
+#   cp *.so $BCFTOOLS_PLUGINS && \
+#   cd .. && \
+#   rm -rf score
 
 ENTRYPOINT ["bcftools"]
 
