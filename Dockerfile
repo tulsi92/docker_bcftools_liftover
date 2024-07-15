@@ -37,20 +37,21 @@ RUN wget https://github.com/samtools/bcftools/archive/refs/tags/$hver.tar.gz && 
 #   sed 's/^#include "cholmod_/#include "suitesparse\/cholmod_/;s/^#include "SuiteSparse_/#include "suitesparse\/SuiteSparse_/' \
 #     /usr/include/suitesparse/cholmod.h | sudo tee /usr/include/cholmod.h
 
-RUN wget -P plugins https://raw.githubusercontent.com/freeseek/score/master/{score.{c,h},{munge,liftover,metal,blup}.c,pgs.{c,mk}} && \
-  make && \
-  /bin/cp bcftools plugins/{munge,liftover,score,metal,pgs,blup}.so $HOME/bin/
-
-# Clone and install the liftover plugin
-# RUN git clone https://github.com/freeseek/score.git && \
-#   cd score && \
+# RUN wget -P plugins https://raw.githubusercontent.com/freeseek/score/master/{score.{c,h},{munge,liftover,metal,blup}.c,pgs.{c,mk}} && \
 #   make && \
-#   cp *.so $BCFTOOLS_PLUGINS && \
-#   cd .. && \
-#   rm -rf score
-
-ENTRYPOINT ["bcftools"]
+#   /bin/cp bcftools plugins/{munge,liftover,score,metal,pgs,blup}.so $HOME/bin/
 
 # Set environment variables for plugins
 ENV BCFTOOLS_PLUGINS=/bcftools/plugins
 ENV PATH="/bcftools:${PATH}"
+
+# Clone and install the liftover plugin
+RUN git clone https://github.com/freeseek/score.git && \
+  cd score && \
+  make && \
+  mkdir -p $BCFTOOLS_PLUGINS && \
+  cp *.so $BCFTOOLS_PLUGINS && \
+  cd .. && \
+  rm -rf score
+
+ENTRYPOINT ["bcftools"]
