@@ -32,7 +32,7 @@ RUN wget https://github.com/samtools/bcftools/archive/refs/tags/$hver.tar.gz && 
   cd .. && rm -rf bcftools $hver.tar.gz
 
 # Compile bcftools plugins
-RUN apt-get install -y libcurl4 libopenblas0-openmp libcholmod4 libsuitesparse-dev
+# RUN apt-get install -y libcurl4 libopenblas0-openmp libcholmod4 libsuitesparse-dev
 # if [ ! -f /usr/include/cholmod.h ]; then
 #   sed 's/^#include "cholmod_/#include "suitesparse\/cholmod_/;s/^#include "SuiteSparse_/#include "suitesparse\/SuiteSparse_/' \
 #     /usr/include/suitesparse/cholmod.h | sudo tee /usr/include/cholmod.h
