@@ -44,7 +44,7 @@ RUN if [ ! -f /usr/include/cholmod.h ]; then \
     /usr/include/suitesparse/cholmod.h | tee /usr/include/cholmod.h; \
   fi
 
-Install bcftools plugins
+# Install bcftools plugins
 RUN wget -P plugins https://raw.githubusercontent.com/freeseek/score/master/{score.{c,h},{munge,liftover,metal,blup}.c,pgs.{c,mk}} && \
   make && \
   /bin/cp plugins/{munge,liftover,score,metal,pgs,blup}.so $BCFTOOLS_PLUGINS
